@@ -18,10 +18,10 @@
 	$settings = array(
 
 		// Website title
-		'title' => 'strace.club',
+		'title' => 'your title',
 
 		// Description for this website
-		'description' => '',
+		'description' => 'describe your upload size a little',
 
 		// Base path (auto-detection)
 		'base_path' => dirname(__FILE__) . DIRECTORY_SEPARATOR,
@@ -47,13 +47,13 @@
 		// Display file dates format
 		'listfiles_date_format' => 'F d Y H:i:s',
 
-		// Randomize file names (number of 'false')
+		// Randomize file names. Number for file name length or false to disable.
 		'random_name_len' => 8,
 
-		// Keep filetype information (if random name is activated)
+		// Keep filetype (file extension) information (if random name is activated).
 		'random_name_keep_type' => true,
 
-		// Random file name letters (no need to mix this)
+		// Letters that are used for random file name generation (alphabet).
 		'random_name_alphabet' => 'abcdefghijklmnopqrstuvwxyz0123456789',
 
 		// Display debugging information
@@ -132,13 +132,15 @@
 	if ($settings['allow_deletion'] || $settings['allow_private']) {
 		session_start();
 
-		// 'User ID'
+		// Is user id given?
 		if (!isset($_SESSION['upload_user_id'])) {
+			// Genereate random 'user id'
 			$_SESSION['upload_user_id'] = mt_rand(100000, 999999);
 		}
 
 		// List of filenames that were uploaded by this user
 		if (!isset($_SESSION['upload_user_files'])) {
+			// Init uploaded user's files array
 			$_SESSION['upload_user_files'] = array();
 		}
 	}
@@ -152,7 +154,6 @@
 		// Displaying debug information
 		echo '<h2>Data:</h2>';
 		echo '<pre>' . print_r($data, true) .  '</pre>';
-		echo '</pre>';
 
 		// Displaying debug information
 		echo '<h2>SESSION:</h2>';
@@ -335,13 +336,13 @@
 		// Default is HTTP
 		$protocol = 'http';
 
-		// Are some specific fields set?
+		// These fields indicate HTTPS usage
 		if (((isset($_SERVER['HTTPS'])) && (strtolower($_SERVER['HTTPS']) == 'on')) || ((isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) && (strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'))) {
 			// Switch to HTTPS
 			$protocol = 'https';
 		}
  
-		// Return cached value
+		// Return protocol
 		return $protocol;
 	}
  
@@ -368,14 +369,18 @@
 
 	// Only read files if the feature is enabled
 	if ($settings['listfiles']) {
+		// Create array from it
 		$file_array = createArrayFromPath($data['uploaddir']);
 
-		// Removing old files
+		// Should old files be removed?
 		if ($settings['remove_old_files']) {
+			// Remove old files
 			removeOldFiles($data['uploaddir']);
+
+			// Re-create it
+			$file_array = createArrayFromPath($data['uploaddir']);
 		}
 
-		$file_array = createArrayFromPath($data['uploaddir']);
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
