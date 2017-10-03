@@ -90,15 +90,15 @@
 	// Is the local config file there?
 	if (isReadableFile('config-local.php')) {
 		// Load it then
-		include('config-local.php');
-	}// END - if
+		include 'config-local.php';
+	}
 
 	// Enabling error reporting
 	if ($settings['debug']) {
 		error_reporting(E_ALL);
 		ini_set('display_startup_errors',1);
 		ini_set('display_errors',1);
-	} // END - if
+	}
 
 	$data = array();
 
@@ -135,13 +135,13 @@
 		// 'User ID'
 		if (!isset($_SESSION['upload_user_id'])) {
 			$_SESSION['upload_user_id'] = mt_rand(100000, 999999);
-		} //END - if
+		}
 
 		// List of filenames that were uploaded by this user
 		if (!isset($_SESSION['upload_user_files'])) {
 			$_SESSION['upload_user_files'] = array();
-		} //END - if
-	} //END - if
+		}
+	}
 
 	// If debug is enabled, logging all variables
 	if ($settings['debug']) {
@@ -175,9 +175,11 @@
 	// Rotating a two-dimensional array
 	function diverseArray ($vector) {
 		$result = array();
-		foreach ($vector as $key1 => $value1)
-			foreach ($value1 as $key2 => $value2)
+		foreach ($vector as $key1 => $value1) {
+			foreach ($value1 as $key2 => $value2) {
 				$result[$key2][$key1] = $value2;
+			}
+		}
 		return $result;
 	}
 
@@ -194,13 +196,13 @@
 				$file_data['target_file_name'] = '';
 				while (strlen($file_data['target_file_name']) < $settings['random_name_len']) {
 					$file_data['target_file_name'] .= $settings['random_name_alphabet'][mt_rand(0, strlen($settings['random_name_alphabet']) - 1)];
-				} //END - if
+				}
 
 				if ($settings['random_name_keep_type']) {
 					$file_data['target_file_name'] .= '.' . pathinfo($file_data['uploaded_file_name'], PATHINFO_EXTENSION);
-				} //END - if
+				}
 			} while (isReadableFile($file_data['target_file_name']));
-		} //END - if
+		}
 
 		$file_data['upload_target_file'] = $data['uploaddir'] . DIRECTORY_SEPARATOR . $file_data['target_file_name'];
 
@@ -208,13 +210,13 @@
 		if (isReadableFile($file_data['upload_target_file'])) {
 			echo 'File name already exists' . "\n";
 			return false;
-		} //END - if
+		}
 
 		// Moving uploaded file OK
 		if (move_uploaded_file($file_data['tmp_name'], $file_data['upload_target_file'])) {
 			if ($settings['listfiles'] && ($settings['allow_deletion'] || $settings['allow_private'])) {
 				$_SESSION['upload_user_files'][] = $file_data['target_file_name'];
-			} //END - if
+			}
 
 			echo $settings['url'] .  $file_data['target_file_name'] . "\n";
 
@@ -236,8 +238,8 @@
 				unlink($fqfn);
 				echo 'File has been removed';
 				exit;
-			} //END - if
-		} //END - if
+			}
+		}
 	}
 
 	// Mark/unmark file as hidden
@@ -255,8 +257,8 @@
 					echo 'File has been hidden';
 				}
 				exit;
-			} //END - if
-		} //END - if
+			}
+		}
 	}
 
 	// Checks if the given file is a file and is readable
@@ -271,23 +273,23 @@
 			$file_array = diverseArray($_FILES['file']);
 			foreach ($file_array as $file_data) {
 				$targetFile = uploadFile($file_data);
-			} //END - foreach
+			}
 		} else {
 			$targetFile = uploadFile($_FILES['file']);
 		}
 		exit;
-	} //END - if
+	}
 
 	// Other file functions (delete, private).
 	if (isset($_POST)) {
 		if ($settings['allow_deletion'] && (isset($_POST['target'])) && isset($_POST['action']) && $_POST['action'] === 'delete') {
 			deleteFile($_POST['target']);
-		} //END - if
+		}
 
 		if ($settings['allow_private'] && (isset($_POST['target'])) && isset($_POST['action']) && $_POST['action'] === 'privatetoggle') {
 			markUnmarkHidden($_POST['target']);
-		} //END - if
-	} //END - if
+		}
+	}
 
 	// List files in a given directory, excluding certain files
 	function createArrayFromPath ($dir) {
@@ -296,7 +298,7 @@
 		// Empty paths are not accepted
 		if (empty($dir)) {
 			die(sprintf('[%s:%d]: R.I.P.: Parameter "dir" cannot be empty.', __FUNCTION__, __LINE__));
-		} // END - if
+		}
 
 		$file_array = array();
 
@@ -306,8 +308,8 @@
 			$fqfn = $dir . DIRECTORY_SEPARATOR . $filename;
 			if (isReadableFile($fqfn) && !in_array($filename, $data['ignores'])) {
 				$file_array[filemtime($fqfn)] = $filename;
-			} //END - if
-		} //END - while
+			}
+		}
 
 		ksort($file_array);
 
@@ -324,8 +326,8 @@
 			$fqfn = $dir . DIRECTORY_SEPARATOR . $file;
 			if ($settings['time_limit'] < time() - filemtime($fqfn)) {
 				unlink($fqfn);
-			} //END - if
-		} //END - foreach
+			}
+		}
 	}
 
 	// Detects server protocol (http/s)
@@ -337,7 +339,7 @@
 		if (((isset($_SERVER['HTTPS'])) && (strtolower($_SERVER['HTTPS']) == 'on')) || ((isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) && (strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'))) {
 			// Switch to HTTPS
 			$protocol = 'https';
-		} // END - if
+		}
  
 		// Return cached value
 		return $protocol;
@@ -355,7 +357,7 @@
 		if ((($port == 80) && ($protocol == 'http')) || (($port == 443) && ($protocol == 'https'))) {
 			// Default port found
 			$port = '';
-		} // END - if
+		}
 
 		// Construct base URL
 		$baseUrl = sprintf('%s://%s%s%s', $protocol, getenv('SERVER_NAME'), $port, dirname(getenv('SCRIPT_NAME')));
@@ -371,7 +373,7 @@
 		// Removing old files
 		if ($settings['remove_old_files']) {
 			removeOldFiles($data['uploaddir']);
-		} //END - if
+		}
 
 		$file_array = createArrayFromPath($data['uploaddir']);
 	}
