@@ -501,11 +501,17 @@
 		<h1><?=$settings['title']?></h1>
 		<p><?=$settings['description']?></p>
 		<form action="<?= $data['scriptname'] ?>" method="post" enctype="multipart/form-data" class="dropzone" id="simpleupload-form">
-			Maximum upload size: <?php echo $data['max_upload_size']; ?><br />
-			<input type="file" name="file[]" id="simpleupload-input" />
-			<noscript>
-				<input type="submit" value="Upload file" />
-			</noscript>
+			<p>
+				Maximum upload size: <?php echo $data['max_upload_size']; ?><br />
+			</p>
+
+			<p>
+				Upload files:<br />
+				<input type="file" name="file[]" id="simpleupload-input" />
+				<noscript>
+					<input type="submit" value="Upload file" />
+				</noscript>
+			</p>
 		</form>
 		<?php if (($settings['listfiles']) && (count($file_array) > 0)) { ?>
 			<ul id="simpleupload-ul">
