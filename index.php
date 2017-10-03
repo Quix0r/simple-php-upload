@@ -78,8 +78,12 @@
 		// Remove old files?
 		'remove_old_files' => true,
 
-		// Privacy: Allow external references (the "fork me" ribbon)
-		'allow_external_refs' => true,
+		// Privacy: Enable "fork me" ribbon as it may expose privacy problems
+		'enable_ribbon' => true,
+		/*
+		 * It basically functions as a beacon, signaling the 3rd party (github)
+		 * where this script is being used.
+		 */
 	);
 	// =============={ Configuration End }==============
 
@@ -505,24 +509,28 @@
 						$file_owner = false;
 						$file_private = $filename[0] === '.';
 
-						if ($settings['listfiles_size'])
+						if ($settings['listfiles_size']) {
 							$file_info[] = formatSize(filesize($fqfn));
+						}
 
-						if ($settings['listfiles_size'])
+						if ($settings['listfiles_size']) {
 							$file_info[] = date($settings['listfiles_date_format'], $mtime);
+						}
 
-						if ($settings['allow_deletion'] || $settings['allow_private'])
-							if (in_array(substr($filename, 1), $_SESSION['upload_user_files']) || in_array($filename, $_SESSION['upload_user_files']))
-								$file_owner = true;
+						if (($settings['allow_deletion'] || $settings['allow_private']) && (in_array(substr($filename, 1), $_SESSION['upload_user_files']) || in_array($filename, $_SESSION['upload_user_files']))) {
+							$file_owner = true;
+						}
 
 						$file_info = implode(', ', $file_info);
 
-						if (strlen($file_info) > 0)
+						if (strlen($file_info) > 0) {
 							$file_info = ' (' . $file_info . ')';
+						}
 
 						$class = '';
-						if ($file_owner)
+						if ($file_owner) {
 							$class = 'owned';
+						}
 
 						if (!$file_private || $file_owner) {
 							echo "<li class=\"' . $class . '\">";
@@ -533,14 +541,17 @@
 							echo "<a class=\"uploaded_file\" href=\"$url\" target=\"_blank\">$filename<span>$file_info</span></a>";
 
 							if ($file_owner) {
-								if ($settings['allow_deletion'])
+								if ($settings['allow_deletion']) {
 									echo '<form action="' . $data['scriptname'] . '" method="post"><input type="hidden" name="target" value="' . $filename . '" /><input type="hidden" name="action" value="delete" /><button type="submit">delete</button></form>';
+								}
 
-								if ($settings['allow_private'])
-									if ($file_private)
+								if ($settings['allow_private']) {
+									if ($file_private) {
 										echo '<form action="' . $data['scriptname'] . '" method="post"><input type="hidden" name="target" value="' . $filename . '" /><input type="hidden" name="action" value="privatetoggle" /><button type="submit">make public</button></form>';
-									else
+									} else {
 										echo '<form action="' . $data['scriptname'] . '" method="post"><input type="hidden" name="target" value="' . $filename . '" /><input type="hidden" name="action" value="privatetoggle" /><button type="submit">make private</button></form>';
+									}
+								}
 							}
 
 							echo "</li>";
@@ -551,11 +562,10 @@
 		<?php
 		}
 
-		if ($settings['allow_external_refs']) {
+		if ($settings['enable_ribbon']) {
 		?>
 			<a href="https://github.com/muchweb/simple-php-upload" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 		<?php
-		} else {
 		?>
 			<a href="https://github.com/muchweb/simple-php-upload" target="_blank">Fork me on GitHub</a>
 		<?php
