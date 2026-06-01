@@ -161,7 +161,7 @@
 	}
 
 	// Format file size
-	function formatSize ($bytes) {
+	function formatSize (int $bytes): string {
 		$units = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 
 		$bytes = max($bytes, 0);
@@ -174,8 +174,8 @@
 	}
 
 	// Rotating a two-dimensional array
-	function diverseArray ($vector) {
-		$result = array();
+	function diverseArray (array $vector): array {
+		$result = [];
 		foreach ($vector as $key1 => $value1) {
 			foreach ($value1 as $key2 => $value2) {
 				$result[$key2][$key1] = $value2;
@@ -185,7 +185,7 @@
 	}
 
 	// Handling file upload
-	function uploadFile ($file_data) {
+	function uploadFile (array $file_data): bool {
 		global $settings, $data;
 
 		$file_data['uploaded_file_name'] = basename($file_data['name']);
@@ -230,7 +230,7 @@
 	}
 
 	// Delete file
-	function deleteFile ($file) {
+	function deleteFile (string $file): void {
 		global $data;
 
 		if (in_array(substr($file, 1), $_SESSION['upload_user_files']) || in_array($file, $_SESSION['upload_user_files'])) {
@@ -244,7 +244,7 @@
 	}
 
 	// Mark/unmark file as hidden
-	function markUnmarkHidden ($file) {
+	function markUnmarkHidden (string $file): void {
 		global $data;
 
 		if (in_array(substr($file, 1), $_SESSION['upload_user_files']) || in_array($file, $_SESSION['upload_user_files'])) {
@@ -263,7 +263,7 @@
 	}
 
 	// Checks if the given file is a file and is readable
-	function isReadableFile ($file) {
+	function isReadableFile (string $file): bool {
 		return (is_file($file) && is_readable($file));
 	}
 
@@ -293,7 +293,7 @@
 	}
 
 	// List files in a given directory, excluding certain files
-	function createArrayFromPath ($dir) {
+	function createArrayFromPath (string $dir): array {
 		global $data;
 
 		// Empty paths are not accepted
@@ -301,7 +301,7 @@
 			die(sprintf('[%s:%d]: R.I.P.: Parameter "dir" cannot be empty.', __FUNCTION__, __LINE__));
 		}
 
-		$file_array = array();
+		$file_array = [];
 
 		$dh = opendir($dir) or die(sprintf('[%s:%d]: R.I.P.: Cannot read directory "%s".', __FUNCTION__, __LINE__, $dir));
 
@@ -320,7 +320,7 @@
 	}
 
 	// Removes old files
-	function removeOldFiles ($dir) {
+	function removeOldFiles (string $dir): void {
 		global $file_array, $settings;
 
 		foreach ($file_array as $file) {
@@ -332,7 +332,7 @@
 	}
 
 	// Detects server protocol (http/s)
-	function detectServerProtocol () {
+	function detectServerProtocol (): string {
 		// Default is HTTP
 		$protocol = 'http';
 
@@ -347,7 +347,7 @@
 	}
  
 	// Detects base URL
-	function detectBaseUrl () {
+	function detectBaseUrl (): string {
 		// First protcol, default is HTTP
 		$protocol = detectServerProtocol();
 
